@@ -16,7 +16,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -33,10 +32,8 @@ public class AnimalSpawningHandler {
             MobSpawnType.TRIGGERED,
             MobSpawnType.BUCKET);
 
-    public static void onLevelLoad(MinecraftServer server, ServerLevel level) {
-        if (level.dimension() == Level.OVERWORLD) {
-            setCreatureAttributes(level.getGameRules());
-        }
+    public static void onServerStarted(MinecraftServer minecraftServer) {
+        setCreatureAttributes(minecraftServer.getGameRules());
     }
 
     public static void setCreatureAttributes(GameRules gameRules) {
@@ -49,33 +46,46 @@ public class AnimalSpawningHandler {
                         persistentAnimals ? 10 : gameRules.getInt(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE));
     }
 
-    public static EventResult onCheckMobDespawn(Mob mob, ServerLevel level) {
-        if (isAllowedToDespawn(mob, level.getGameRules())) {
+    public static EventResult onCheckMobDespawn(Mob mob, ServerLevel serverLevel) {
+        if (isAllowedToDespawn(mob, serverLevel.getGameRules())) {
             // copied from Mob::checkDespawn, so we can run it manually for the creature mob category
-            Player player = mob.level().getNearestPlayer(mob, -1.0);
-            if (player != null) {
-                double distanceToSqr = player.distanceToSqr(mob);
-                int despawnDistance = mob.getType().getCategory().getDespawnDistance();
-                if (distanceToSqr > despawnDistance * despawnDistance) {
-                    return EventResult.ALLOW;
+            if (!mob.isPersistenceRequired() && !mob.requiresCustomPersistence()) {
+                Player player = serverLevel.getNearestPlayer(mob, -1.0);
+                if (player != null) {
+                    double distanceToSqr = player.distanceToSqr(mob);
+                    MobCategory mobCategory = mob.getType().getCategory();
+                    int despawnDistance = mobCategory.getDespawnDistance();
+                    int despawnDistanceSqr = despawnDistance * despawnDistance;
+                    if (distanceToSqr > despawnDistanceSqr) {
+                        return EventResult.ALLOW;
+                    }
+
+                    int noDespawnDistance = mobCategory.getNoDespawnDistance();
+                    int noDespawnDistanceSqr = noDespawnDistance * noDespawnDistance;
+                    if (mob.getNoActionTime() > 600 && mob.getRandom().nextInt(800) == 0
+                            && distanceToSqr > noDespawnDistanceSqr) {
+                        return EventResult.ALLOW;
+                    } else {
+                        if (distanceToSqr < noDespawnDistanceSqr) {
+                            mob.setNoActionTime(0);
+                        }
+
+                        // since this involves random don't let vanilla run again, we covered everything
+                        return EventResult.DENY;
+                    }
                 }
-                int noDespawnDistance = mob.getType().getCategory().getNoDespawnDistance();
-                if (mob.getNoActionTime() > 600 && mob.getRandom().nextInt(800) == 0 &&
-                        distanceToSqr > noDespawnDistance * noDespawnDistance) {
-                    return EventResult.ALLOW;
-                } else {
-                    // since this involves random don't let vanilla run again, we covered everything
-                    return EventResult.DENY;
-                }
+            } else {
+                mob.setNoActionTime(0);
             }
         }
+
         return EventResult.PASS;
     }
 
     public static boolean isAllowedToDespawn(Mob mob, @Nullable GameRules gameRules) {
         if (isAnimalDespawningAllowed(mob.getType(), gameRules, mob.getType().getCategory())) {
-            MobSpawnType spawnType = CommonAbstractions.INSTANCE.getMobSpawnType(mob);
-            return spawnType != null && !PERSISTENT_SPAWN_TYPES.contains(spawnType);
+            MobSpawnType entitySpawnReason = CommonAbstractions.INSTANCE.getMobSpawnType(mob);
+            return entitySpawnReason != null && !PERSISTENT_SPAWN_TYPES.contains(entitySpawnReason);
         } else {
             return false;
         }
@@ -87,7 +97,27 @@ public class AnimalSpawningHandler {
         return mobCategory == MobCategory.CREATURE;
     }
 
-    public static EventResult onEntityLoad(Entity entity, ServerLevel level) {
+    public static EventResult onEntityLoad(Entity entity, ServerLevel serverLevel) {
+        return onEntityLoad(entity, serverLevel, false);
+    }
+
+    public static EventResult onEntitySpawn(Entity entity, ServerLevel serverLevel, @Nullable MobSpawnType mobSpawnType) {
+        return onEntityLoad(entity, serverLevel, true);
+    }
+
+    public static EventResult onEntityLoad(Entity entity, ServerLevel serverLevel, boolean isNewlySpawned) {
+        if (isNewlySpawned && entity instanceof Mob mob) {
+            @Nullable MobSpawnType entitySpawnReason = CommonAbstractions.INSTANCE.getMobSpawnType(mob);
+            // don't spawn mobs during chunk generation which we would remove again anyway since they are certainly too far from the player
+            if (entitySpawnReason == MobSpawnType.CHUNK_GENERATION) {
+                // chunk generation only runs for the creature type, so we can safely fix the type if necessary
+                applyCorrectMobCategory(entity.getType());
+                if (isAnimalDespawningAllowed(entity.getType(), serverLevel.getGameRules(), MobCategory.CREATURE)) {
+                    return EventResult.INTERRUPT;
+                }
+            }
+        }
+
         // make existing mobs in the world persistent to help with compat for worlds that have been used without the mod before
         setPersistenceForPersistentAnimal(entity);
         return EventResult.PASS;
@@ -96,28 +126,13 @@ public class AnimalSpawningHandler {
     private static void setPersistenceForPersistentAnimal(Entity entity) {
         // find all mobs that would count towards the creature mob cap and therefore would hinder the spawn cycle from spawning new animals
         // making them persistent prevents counting towards the mob cap, otherwise this doesn't really have any implications for us since we ignore those spawn types anyway
-        // in vanilla if the mod were to be removed this also has no consequences
+        // in vanilla if the mod were to be removed, this also has no consequences
         if (entity instanceof Mob mob && mob.getType().getCategory() == MobCategory.CREATURE) {
-            // do not check game rule, in case it is toggled on the fly
+            // do not check the game rule, in case it is toggled during gameplay
             if (!mob.isPersistenceRequired() && !isAllowedToDespawn(mob, null)) {
                 mob.setPersistenceRequired();
             }
         }
-    }
-
-    public static EventResult onEntitySpawn(Entity entity, ServerLevel level, @Nullable MobSpawnType mobSpawnType) {
-        if (entity instanceof Mob) {
-            // don't spawn mobs during chunk generation which we would remove again anyway since they are certainly too far from the player
-            if (mobSpawnType == MobSpawnType.CHUNK_GENERATION) {
-                // chunk generation only runs for creature type, so we can safely fix the type if necessary
-                applyCorrectMobCategory(entity.getType());
-                if (isAnimalDespawningAllowed(entity.getType(), level.getGameRules(), MobCategory.CREATURE)) {
-                    return EventResult.INTERRUPT;
-                }
-            }
-            setPersistenceForPersistentAnimal(entity);
-        }
-        return EventResult.PASS;
     }
 
     private static void applyCorrectMobCategory(EntityType<?> entityType) {
@@ -132,8 +147,8 @@ public class AnimalSpawningHandler {
                     .map(ModContainer::getDisplayName)
                     .orElse(resourceLocation.getNamespace());
             RespawningAnimals.LOGGER.warn(
-                    "Mismatched spawn type for {}! Mob is registered as {}, but spawning as {}. Report this to the author of {}" +
-                            (issues.map(s -> " at " + s).orElse("")) + ".",
+                    "Mismatched spawn type for {}! Mob is registered as {}, but spawning as {}. Report this to the author of {}"
+                            + (issues.map(s -> " at " + s).orElse("")) + ".",
                     resourceLocation,
                     entityType.getCategory(),
                     MobCategory.CREATURE,

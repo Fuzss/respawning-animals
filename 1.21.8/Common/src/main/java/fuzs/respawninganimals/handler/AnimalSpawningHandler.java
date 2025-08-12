@@ -43,26 +43,39 @@ public class AnimalSpawningHandler {
         MobCategory.CREATURE.max = persistentAnimals ? 10 : gameRules.getInt(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE);
     }
 
-    public static EventResult onCheckMobDespawn(Mob mob, ServerLevel level) {
-        if (isAllowedToDespawn(mob, level.getGameRules())) {
+    public static EventResult onCheckMobDespawn(Mob mob, ServerLevel serverLevel) {
+        if (isAllowedToDespawn(mob, serverLevel.getGameRules())) {
             // copied from Mob::checkDespawn, so we can run it manually for the creature mob category
-            Player player = mob.level().getNearestPlayer(mob, -1.0);
-            if (player != null) {
-                double distanceToSqr = player.distanceToSqr(mob);
-                int despawnDistance = mob.getType().getCategory().getDespawnDistance();
-                if (distanceToSqr > despawnDistance * despawnDistance) {
-                    return EventResult.ALLOW;
+            if (!mob.isPersistenceRequired() && !mob.requiresCustomPersistence()) {
+                Player player = serverLevel.getNearestPlayer(mob, -1.0);
+                if (player != null) {
+                    double distanceToSqr = player.distanceToSqr(mob);
+                    MobCategory mobCategory = mob.getType().getCategory();
+                    int despawnDistance = mobCategory.getDespawnDistance();
+                    int despawnDistanceSqr = despawnDistance * despawnDistance;
+                    if (distanceToSqr > despawnDistanceSqr) {
+                        return EventResult.ALLOW;
+                    }
+
+                    int noDespawnDistance = mobCategory.getNoDespawnDistance();
+                    int noDespawnDistanceSqr = noDespawnDistance * noDespawnDistance;
+                    if (mob.getNoActionTime() > 600 && mob.getRandom().nextInt(800) == 0
+                            && distanceToSqr > noDespawnDistanceSqr) {
+                        return EventResult.ALLOW;
+                    } else {
+                        if (distanceToSqr < noDespawnDistanceSqr) {
+                            mob.setNoActionTime(0);
+                        }
+
+                        // since this involves random don't let vanilla run again, we covered everything
+                        return EventResult.DENY;
+                    }
                 }
-                int noDespawnDistance = mob.getType().getCategory().getNoDespawnDistance();
-                if (mob.getNoActionTime() > 600 && mob.getRandom().nextInt(800) == 0
-                        && distanceToSqr > noDespawnDistance * noDespawnDistance) {
-                    return EventResult.ALLOW;
-                } else {
-                    // since this involves random don't let vanilla run again, we covered everything
-                    return EventResult.DENY;
-                }
+            } else {
+                mob.setNoActionTime(0);
             }
         }
+
         return EventResult.PASS;
     }
 
@@ -76,9 +89,13 @@ public class AnimalSpawningHandler {
     }
 
     public static boolean isAnimalDespawningAllowed(EntityType<?> entityType, @Nullable GameRules gameRules, MobCategory mobCategory) {
-        if (gameRules != null && gameRules.getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE)) return false;
-        if (entityType.is(ModRegistry.PERSISTENT_ANIMALS_ENTITY_TYPE_TAG)) return false;
-        return mobCategory == MobCategory.CREATURE;
+        if (gameRules != null && gameRules.getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE)) {
+            return false;
+        } else if (entityType.is(ModRegistry.PERSISTENT_ANIMALS_ENTITY_TYPE_TAG)) {
+            return false;
+        } else {
+            return mobCategory == MobCategory.CREATURE;
+        }
     }
 
     public static EventResult onEntityLoad(Entity entity, ServerLevel serverLevel, boolean isNewlySpawned) {
@@ -93,6 +110,7 @@ public class AnimalSpawningHandler {
                 }
             }
         }
+
         // make existing mobs in the world persistent to help with compat for worlds that have been used without the mod before
         setPersistenceForPersistentAnimal(entity);
         return EventResult.PASS;
