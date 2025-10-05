@@ -1,10 +1,6 @@
 {
   "values": [
     {
-      "id": "friendsandfoes:mauler",
-      "required": false
-    },
-    {
       "id": "gamma_beasts:banndu",
       "required": false
     },
@@ -34,22 +30,6 @@
     },
     {
       "id": "gamma_beasts:careyatros_spawn",
-      "required": false
-    },
-    {
-      "id": "gamma_beasts:shecko",
-      "required": false
-    },
-    {
-      "id": "gamma_beasts:shecko_a",
-      "required": false
-    },
-    {
-      "id": "gamma_beasts:shecko_c",
-      "required": false
-    },
-    {
-      "id": "gamma_beasts:shecko_spawn",
       "required": false
     },
     {
@@ -117,22 +97,6 @@
       "required": false
     },
     {
-      "id": "gamma_beasts:zatlah",
-      "required": false
-    },
-    {
-      "id": "gamma_beasts:zatlah_a",
-      "required": false
-    },
-    {
-      "id": "gamma_beasts:zatlah_c",
-      "required": false
-    },
-    {
-      "id": "gamma_beasts:zatlah_spawn",
-      "required": false
-    },
-    {
       "id": "gamma_beasts:gusnow",
       "required": false
     },
@@ -146,6 +110,10 @@
     },
     {
       "id": "gamma_beasts:gusnow_spawn",
+      "required": false
+    },
+    {
+      "id": "friendsandfoes:mauler",
       "required": false
     },
     {
@@ -213,6 +181,22 @@
       "required": false
     },
     {
+      "id": "gamma_beasts:shecko",
+      "required": false
+    },
+    {
+      "id": "gamma_beasts:shecko_a",
+      "required": false
+    },
+    {
+      "id": "gamma_beasts:shecko_c",
+      "required": false
+    },
+    {
+      "id": "gamma_beasts:shecko_spawn",
+      "required": false
+    },
+    {
       "id": "gamma_beasts:skinno",
       "required": false
     },
@@ -242,6 +226,22 @@
     },
     {
       "id": "gamma_beasts:sppinto_spawn",
+      "required": false
+    },
+    {
+      "id": "gamma_beasts:zatlah",
+      "required": false
+    },
+    {
+      "id": "gamma_beasts:zatlah_a",
+      "required": false
+    },
+    {
+      "id": "gamma_beasts:zatlah_c",
+      "required": false
+    },
+    {
+      "id": "gamma_beasts:zatlah_spawn",
       "required": false
     }
   ]
