@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 public class AnimalPersistenceHandler {
 
     public static void onEndEntityTick(Entity entity) {
-        if (entity.level() instanceof ServerLevel serverLevel && entity instanceof Mob mob
+        if (entity.level() instanceof ServerLevel serverLevel && entity.tickCount % 20 == 0 && entity instanceof Mob mob
                 && !mob.isPersistenceRequired()) {
             if (AnimalSpawningHandler.isAllowedToDespawn(mob, serverLevel.getGameRules()) && requiresCustomPersistence(
                     mob)) {

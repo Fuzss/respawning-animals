@@ -1,9 +1,9 @@
 package fuzs.respawninganimals.mixin;
 
-import com.mojang.serialization.DynamicLike;
 import fuzs.respawninganimals.init.ModRegistry;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRuleMap;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,25 +11,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Map;
-import java.util.Optional;
-
 @Mixin(GameRules.class)
 abstract class GameRulesMixin {
     @Shadow
     @Final
-    private Map<GameRules.Key<?>, GameRules.Value<?>> rules;
+    private GameRuleMap rules;
 
-    @Inject(
-            method = "<init>(Lnet/minecraft/world/flag/FeatureFlagSet;Lcom/mojang/serialization/DynamicLike;)V",
-            at = @At("TAIL")
-    )
-    public void init(FeatureFlagSet enabledFeatures, DynamicLike<?> dynamic, CallbackInfo callback) {
+    @Inject(method = "<init>(Lnet/minecraft/world/flag/FeatureFlagSet;Lnet/minecraft/world/level/gamerules/GameRuleMap;)V",
+            at = @At("TAIL"))
+    public void init(FeatureFlagSet featureFlagSet, GameRuleMap gameRuleMap, CallbackInfo callback) {
         // if the game rule is not present (this is a world which has been loaded without the mod before) set value
         // to true instead of default false to prevent unwanted behavior such as animals vanishing from farms
-        Optional<String> result = dynamic.get(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE.getId()).asString().result();
-        if (result.isEmpty()) {
-            ((GameRules.BooleanValue) this.rules.get(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE)).set(true, null);
+        if (!gameRuleMap.has(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value())) {
+            this.rules.set(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value(), Boolean.FALSE);
         }
     }
 }
