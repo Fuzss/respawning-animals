@@ -8,17 +8,17 @@ import fuzs.respawninganimals.RespawningAnimals;
 import fuzs.respawninganimals.init.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.random.Weighted;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.gamerules.GameRules;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,21 +26,30 @@ import java.util.Optional;
 import java.util.Set;
 
 public class AnimalSpawningHandler {
+    private static final int VANILLA_CREATURE_CATEGORY_MAX_INSTANCES = MobCategory.CREATURE.getMaxInstancesPerChunk();
+    private static final int VANILLA_CREATURE_CATEGORY_DESPAWN_DISTANCE = MobCategory.CREATURE.getDespawnDistance();
+    private static final int VANILLA_CREATURE_CATEGORY_NO_DESPAWN_DISTANCE = MobCategory.CREATURE.getNoDespawnDistance();
     private static final Set<EntitySpawnReason> PERSISTENT_SPAWN_TYPES = Set.of(EntitySpawnReason.STRUCTURE,
             EntitySpawnReason.BREEDING,
             EntitySpawnReason.TRIGGERED,
             EntitySpawnReason.BUCKET);
 
     public static void onServerStarted(MinecraftServer minecraftServer) {
-        setCreatureAttributes(minecraftServer.getGameRules());
+        onGameRulesUpdated(minecraftServer.getWorldData().getGameRules());
     }
 
-    public static void setCreatureAttributes(GameRules gameRules) {
-        boolean persistentAnimals = gameRules.getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE);
-        // this setting removes a 400 tick cooldown between spawn cycles, only creatures have this, all other categories don't
-        MobCategory.CREATURE.isPersistent = persistentAnimals;
-        // increase to 18 by default to be more similar to beta era spawning mechanics
-        MobCategory.CREATURE.max = persistentAnimals ? 10 : gameRules.getInt(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE);
+    public static void onGameRulesUpdated(GameRules gameRules) {
+        // This setting removes a 400-tick cooldown between spawn cycles.
+        // Only creatures have this, all other categories don't.
+        MobCategory.CREATURE.isPersistent = !gameRules.get(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value());
+        MobCategory.CREATURE.max = MobCategory.CREATURE.isPersistent ? VANILLA_CREATURE_CATEGORY_MAX_INSTANCES :
+                gameRules.get(ModRegistry.MIN_ANIMALS_NEAR_PLAYER_GAME_RULE.value());
+        MobCategory.CREATURE.noDespawnDistance =
+                MobCategory.CREATURE.isPersistent ? VANILLA_CREATURE_CATEGORY_NO_DESPAWN_DISTANCE :
+                        gameRules.get(ModRegistry.REMOVE_ANIMALS_DISTANCE_GAME_RULE.value());
+        MobCategory.CREATURE.despawnDistance =
+                MobCategory.CREATURE.isPersistent ? VANILLA_CREATURE_CATEGORY_DESPAWN_DISTANCE :
+                        gameRules.get(ModRegistry.REMOVE_ANIMALS_INSTANTLY_DISTANCE_GAME_RULE.value());
     }
 
     public static EventResult onCheckMobDespawn(Mob mob, ServerLevel serverLevel) {
@@ -89,7 +98,7 @@ public class AnimalSpawningHandler {
     }
 
     public static boolean isAnimalDespawningAllowed(EntityType<?> entityType, @Nullable GameRules gameRules, MobCategory mobCategory) {
-        if (gameRules != null && gameRules.getBoolean(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE)) {
+        if (gameRules != null && !gameRules.get(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value())) {
             return false;
         } else if (entityType.is(ModRegistry.PERSISTENT_ANIMALS_ENTITY_TYPE_TAG)) {
             return false;
@@ -100,7 +109,7 @@ public class AnimalSpawningHandler {
 
     public static EventResult onEntityLoad(Entity entity, ServerLevel serverLevel, boolean isNewlySpawned) {
         if (isNewlySpawned) {
-            @Nullable EntitySpawnReason entitySpawnReason = EntityHelper.getMobSpawnReason(entity);
+            EntitySpawnReason entitySpawnReason = EntityHelper.getMobSpawnReason(entity);
             // don't spawn mobs during chunk generation which we would remove again anyway since they are certainly too far from the player
             if (entitySpawnReason == EntitySpawnReason.CHUNK_GENERATION) {
                 // chunk generation only runs for the creature type, so we can safely fix the type if necessary
@@ -133,16 +142,16 @@ public class AnimalSpawningHandler {
         // otherwise the entity does not count towards its own spawn cap, which can lead to infinite spawns
         // for creatures this unfortunately usually goes unnoticed since the spawning cycle never runs as there are usually enough vanilla animals in the world to fill up the cap
         if (entityType.getCategory() != MobCategory.CREATURE) {
-            ResourceLocation resourceLocation = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
-            Optional<String> issues = ModLoaderEnvironment.INSTANCE.getModContainer(resourceLocation.getNamespace())
+            Identifier identifier = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
+            Optional<String> issues = ModLoaderEnvironment.INSTANCE.getModContainer(identifier.getNamespace())
                     .map(modContainer -> modContainer.getContactTypes().get("issues"));
-            String modName = ModLoaderEnvironment.INSTANCE.getModContainer(resourceLocation.getNamespace())
+            String modName = ModLoaderEnvironment.INSTANCE.getModContainer(identifier.getNamespace())
                     .map(ModContainer::getDisplayName)
-                    .orElse(resourceLocation.getNamespace());
+                    .orElse(identifier.getNamespace());
             RespawningAnimals.LOGGER.warn(
                     "Mismatched spawn type for {}! Mob is registered as {}, but spawning as {}. Report this to the author of {}"
-                            + (issues.map(s -> " at " + s).orElse("")) + ".",
-                    resourceLocation,
+                            + (issues.map((String s) -> " at " + s).orElse("")) + ".",
+                    identifier,
                     entityType.getCategory(),
                     MobCategory.CREATURE,
                     modName);

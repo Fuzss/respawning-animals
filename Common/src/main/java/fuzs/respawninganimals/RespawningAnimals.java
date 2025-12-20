@@ -1,18 +1,20 @@
 package fuzs.respawninganimals;
 
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
-import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import fuzs.puzzleslib.api.event.v1.entity.EntityRidingEvents;
 import fuzs.puzzleslib.api.event.v1.entity.EntityTickEvents;
 import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
 import fuzs.puzzleslib.api.event.v1.entity.living.AnimalTameCallback;
 import fuzs.puzzleslib.api.event.v1.entity.living.CheckMobDespawnCallback;
 import fuzs.puzzleslib.api.event.v1.level.GatherPotentialSpawnsCallback;
+import fuzs.puzzleslib.api.event.v1.server.GameRuleUpdatedCallback;
 import fuzs.puzzleslib.api.event.v1.server.ServerLifecycleEvents;
 import fuzs.respawninganimals.handler.AnimalPersistenceHandler;
 import fuzs.respawninganimals.handler.AnimalSpawningHandler;
 import fuzs.respawninganimals.init.ModRegistry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.gamerules.GameRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +39,27 @@ public class RespawningAnimals implements ModConstructor {
         GatherPotentialSpawnsCallback.EVENT.register(AnimalSpawningHandler::onGatherPotentialSpawns);
     }
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocationHelper.fromNamespaceAndPath(MOD_ID, path);
+    @Override
+    public void onCommonSetup() {
+        GameRuleUpdatedCallback.gameRuleUpdated(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value())
+                .register((MinecraftServer minecraftServer, GameRule<Boolean> gameRule, Boolean newGameRuleValue) -> {
+                    AnimalSpawningHandler.onGameRulesUpdated(minecraftServer.overworld().getGameRules());
+                });
+        GameRuleUpdatedCallback.gameRuleUpdated(ModRegistry.MIN_ANIMALS_NEAR_PLAYER_GAME_RULE.value())
+                .register((MinecraftServer minecraftServer, GameRule<Integer> gameRule, Integer newGameRuleValue) -> {
+                    AnimalSpawningHandler.onGameRulesUpdated(minecraftServer.overworld().getGameRules());
+                });
+        GameRuleUpdatedCallback.gameRuleUpdated(ModRegistry.REMOVE_ANIMALS_DISTANCE_GAME_RULE.value())
+                .register((MinecraftServer minecraftServer, GameRule<Integer> gameRule, Integer newGameRuleValue) -> {
+                    AnimalSpawningHandler.onGameRulesUpdated(minecraftServer.overworld().getGameRules());
+                });
+        GameRuleUpdatedCallback.gameRuleUpdated(ModRegistry.REMOVE_ANIMALS_INSTANTLY_DISTANCE_GAME_RULE.value())
+                .register((MinecraftServer minecraftServer, GameRule<Integer> gameRule, Integer newGameRuleValue) -> {
+                    AnimalSpawningHandler.onGameRulesUpdated(minecraftServer.overworld().getGameRules());
+                });
+    }
+
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 }

@@ -12,9 +12,17 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
 
     @Override
     public void addTranslations(TranslationBuilder builder) {
-        builder.add(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE, "Persistent animals");
-        builder.addGameRuleDescription(ModRegistry.PERSISTENT_ANIMALS_GAME_RULE, "Animals will stay in the world forever and can only be reproduced from breeding.");
-        builder.add(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE, "Animal mob cap");
-        builder.addGameRuleDescription(ModRegistry.ANIMAL_MOB_CAP_GAME_RULE, "Constant to help determine when to stop spawning animals in a world.");
+        builder.add(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value(), "Remove animals when far away");
+        builder.addGameRuleDescription(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value(),
+                "Animals are removed when far away from players unless made permanent by interactions such as feeding, leashing, riding, or naming.");
+        builder.add(ModRegistry.MIN_ANIMALS_NEAR_PLAYER_GAME_RULE.value(), "Minimum animals near player");
+        builder.addGameRuleDescription(ModRegistry.MIN_ANIMALS_NEAR_PLAYER_GAME_RULE.value(),
+                "Spawn animals near each player if less than this value exist locally. Only applies when animals can be removed.");
+        builder.add(ModRegistry.REMOVE_ANIMALS_DISTANCE_GAME_RULE.value(), "Animal removal distance");
+        builder.addGameRuleDescription(ModRegistry.REMOVE_ANIMALS_DISTANCE_GAME_RULE.value(),
+                "Animals beyond this distance from the nearest player may be removed over time. Only applies when animals can be removed.");
+        builder.add(ModRegistry.REMOVE_ANIMALS_INSTANTLY_DISTANCE_GAME_RULE.value(), "Instant animal removal distance");
+        builder.addGameRuleDescription(ModRegistry.REMOVE_ANIMALS_INSTANTLY_DISTANCE_GAME_RULE.value(),
+                "Animals beyond this distance from the nearest player are removed instantly. Only applies when animals can be removed.");
     }
 }

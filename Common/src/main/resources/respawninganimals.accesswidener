@@ -5,3 +5,7 @@ accessible  field   net/minecraft/world/entity/MobCategory  max I
 mutable field   net/minecraft/world/entity/MobCategory  max I
 accessible  field   net/minecraft/world/entity/MobCategory  isPersistent    Z
 mutable field   net/minecraft/world/entity/MobCategory  isPersistent    Z
+accessible  field   net/minecraft/world/entity/MobCategory  despawnDistance I
+mutable field   net/minecraft/world/entity/MobCategory  despawnDistance I
+accessible  field   net/minecraft/world/entity/MobCategory  noDespawnDistance   I
+mutable field   net/minecraft/world/entity/MobCategory  noDespawnDistance   I
