@@ -25,6 +25,10 @@ public class ModRegistry {
             GameRulesFactory.INSTANCE.createBooleanRule(false, (server, booleanValue) -> {
                 AnimalSpawningHandler.setCreatureAttributes(server.getGameRules());
             }));
+    public static final GameRules.Key<GameRules.IntegerValue> INHABITED_TIME_THRESHOLD_GAME_RULE = GameRulesFactory.INSTANCE.register(
+            "animalSpawnInhabitedTimeThreshold",
+            GameRules.Category.SPAWNING,
+            GameRulesFactory.INSTANCE.createIntRule(-1, -1, Integer.MAX_VALUE));
 
     public static void bootstrap() {
         // NO-OP

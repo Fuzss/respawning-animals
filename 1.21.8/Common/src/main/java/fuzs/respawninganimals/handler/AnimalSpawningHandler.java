@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import org.jetbrains.annotations.Nullable;
 
@@ -150,8 +151,33 @@ public class AnimalSpawningHandler {
         }
     }
 
+    private static boolean isInhabitedTimeAllowingSpawn(ServerLevel level, BlockPos blockPos) {
+        int threshold = level.getGameRules().getInt(ModRegistry.INHABITED_TIME_THRESHOLD_GAME_RULE);
+
+        if (threshold < 0) {
+            return true;
+        }
+        
+        int chunkX = blockPos.getX() >> 4;
+        int chunkZ = blockPos.getZ() >> 4;
+        
+        if (!level.hasChunk(chunkX, chunkZ)) {
+            return true;
+        }
+        
+        ChunkAccess chunk = level.getChunk(chunkX, chunkZ);
+        long inhabitedTime = chunk.getInhabitedTime();
+        boolean allowSpawning = inhabitedTime <= threshold;
+        return allowSpawning;
+    }
+
     public static void onGatherPotentialSpawns(ServerLevel level, StructureManager structureManager, ChunkGenerator chunkGenerator, MobCategory mobCategory, BlockPos blockPos, List<Weighted<MobSpawnSettings.SpawnerData>> mobs) {
         if (mobCategory == MobCategory.CREATURE) {
+            if (!isInhabitedTimeAllowingSpawn(level, blockPos)) {
+                mobs.clear();
+                return;
+            }
+            
             Iterator<Weighted<MobSpawnSettings.SpawnerData>> iterator = mobs.iterator();
             while (iterator.hasNext()) {
                 Weighted<MobSpawnSettings.SpawnerData> spawnerData = iterator.next();
