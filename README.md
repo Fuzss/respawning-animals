@@ -1,73 +1,65 @@
 # Respawning Animals
 
-A Minecraft mod. Downloads can be found on [CurseForge](https://www.curseforge.com/members/fuzs_/projects) and [Modrinth](https://modrinth.com/user/Fuzs).
+### Minecraft 26.x
 
-![](https://raw.githubusercontent.com/Fuzss/modresources/main/pages/data/respawninganimals/banner.png)
+| Branch | Status | Changelog | Fabric | NeoForge |
+| --- | --- | --- | --- | --- |
+| [26.1.x](https://github.com/Fuzss/respawning-animals/tree/26.1.x) | ✅&nbsp;Primary | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/26.1.x/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/minecraft/mc-mods/respawning-animals/files/all?version=26.1&gameVersionTypeId=4)<br /> <img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/mod/respawning-animals/versions?g=26.1&l=fabric) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/minecraft/mc-mods/respawning-animals/files/all?version=26.1&gameVersionTypeId=6)<br /> <img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/mod/respawning-animals/versions?g=26.1&l=neoforge) |
 
-## Configuration
+### Minecraft 1.21.x
 
-Remove Animals is fully controlled through game rules and entity tags. No other configuration options are provided.
+| Branch | Status | Changelog | Fabric | NeoForge |
+| --- | --- | --- | --- | --- |
+| [1.21.11](https://github.com/Fuzss/respawning-animals/tree/1.21.11) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.21.11/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/minecraft/mc-mods/respawning-animals/files/all?version=1.21.11&gameVersionTypeId=4)<br /> <img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/mod/respawning-animals/versions?g=1.21.11&l=fabric) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/minecraft/mc-mods/respawning-animals/files/all?version=1.21.11&gameVersionTypeId=6)<br /> <img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/mod/respawning-animals/versions?g=1.21.11&l=neoforge) |
 
-All rules are world specific and can be set initially during world creation via the game rules menu, or changed at any time using the `/gamerule` command.
+| Branch | Status | Changelog | Downloads |
+| --- | --- | --- | --- |
+| [1.21.10](https://github.com/Fuzss/respawning-animals/tree/1.21.10) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.21.10/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.21.8](https://github.com/Fuzss/respawning-animals/tree/1.21.8) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.21.8/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.21.5](https://github.com/Fuzss/respawning-animals/tree/1.21.5) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.21.5/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.21.4](https://github.com/Fuzss/respawning-animals/tree/1.21.4) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.21.4/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.21.1](https://github.com/Fuzss/respawning-animals/tree/1.21.1) | ✅&nbsp;Maintained | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.21.1/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
 
----
+### Minecraft 1.20.x
 
-### Game rules
+| Branch | Status | Changelog | Downloads |
+| --- | --- | --- | --- |
+| [1.20.4](https://github.com/Fuzss/respawning-animals/tree/1.20.4) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.20.4/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.20.1](https://github.com/Fuzss/respawning-animals/tree/1.20.1) | ⚠️&nbsp;Bugfixes&nbsp;only | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.20.1/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.20.0](https://github.com/Fuzss/respawning-animals/tree/1.20.0) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.20.0/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
 
-#### `respawninganimals:remove_animals_when_far_away`
-**Default:** `true` for new worlds, `false` for existing worlds
+### Minecraft 1.19.x
 
-Controls whether animals are removed when they are far away from players.
+| Branch | Status | Changelog | Downloads |
+| --- | --- | --- | --- |
+| [1.19.4](https://github.com/Fuzss/respawning-animals/tree/1.19.4) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.19.4/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.19.3](https://github.com/Fuzss/respawning-animals/tree/1.19.3) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.19.3/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
+| [1.19.2](https://github.com/Fuzss/respawning-animals/tree/1.19.2) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.19.2/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
 
-When enabled, animals no longer stay in the world forever. Animals that are far away from any player may be removed, similar to monsters and water creatures. Animals become permanent only after player interaction such as feeding, leashing, riding, or naming.
+### Minecraft 1.18.x
 
-When disabled, animals behave like in vanilla Minecraft and are never removed due to distance.
+| Branch | Status | Changelog | Downloads |
+| --- | --- | --- | --- |
+| [1.18.2](https://github.com/Fuzss/respawning-animals/tree/1.18.2) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.18.2/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
 
-This rule must be enabled for all other rules below to have any effect.
+### Minecraft 1.16.x
 
-This rule was known as `persistentAnimals` before Minecraft 1.21.11.
+| Branch | Status | Changelog | Downloads |
+| --- | --- | --- | --- |
+| [1.16.5](https://github.com/Fuzss/respawning-animals/tree/1.16.5) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.16.5/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
 
----
+### Minecraft 1.15.x
 
-#### `respawninganimals:min_animals_near_player`
-**Default:** `15`
-
-If the number of animals near a player falls below this value, new animals will spawn nearby to reach the minimum.
-
-This helps keep areas populated when animals are removed over time.
-
-Only applies when `remove_animals_when_far_away` is enabled.
-
-This rule was known as `animalMobCap` before Minecraft 1.21.11.
-
----
-
-#### `respawninganimals:remove_animals_distance`
-**Default:** `32`
-
-Animals farther than this distance from the nearest player may be removed over time.
-
-Only applies when `remove_animals_when_far_away` is enabled.
-
----
-
-#### `respawninganimals:remove_animals_instantly_distance`
-**Default:** `128`
-
-Animals farther than this distance from the nearest player are removed instantly.
-
-This acts as a hard cutoff to prevent animals from accumulating far away from players.
-
-Only applies when `remove_animals_when_far_away` is enabled.
+| Branch | Status | Changelog | Downloads |
+| --- | --- | --- | --- |
+| [1.15.2](https://github.com/Fuzss/respawning-animals/tree/1.15.2) | ❌&nbsp;Archived | [CHANGELOG.md](https://github.com/Fuzss/respawning-animals/blob/1.15.2/CHANGELOG.md) | <img src="https://cdn.simpleicons.org/curseforge" width="14" />&nbsp;[CurseForge](https://www.curseforge.com/members/fuzs_/projects)<br /><img src="https://cdn.simpleicons.org/modrinth" width="14" />&nbsp;[Modrinth](https://modrinth.com/user/Fuzs) |
 
 ---
 
-### Entity tags
+**✅&nbsp;Primary** — Latest version with active development and new features
 
-#### `respawninganimals:persistent_animals`
+**✅&nbsp;Maintained** — Receives backports and selected new features
 
-It is possible to exclude specific animal types from being affected by these rules.
+**⚠️&nbsp;Bugfixes&nbsp;only** — Critical fixes and crash fixes only
 
-Any entity type added to this tag will never be removed, regardless of game rule settings.
-
-This allows fine grained control for mods, datapacks, or special animals that should always remain in the world.
+**❌&nbsp;Archived** — No longer updated
