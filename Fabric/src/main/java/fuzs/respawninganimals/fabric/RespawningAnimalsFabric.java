@@ -1,6 +1,6 @@
 package fuzs.respawninganimals.fabric;
 
-import fuzs.puzzleslib.api.core.v1.ModConstructor;
+import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
 import fuzs.respawninganimals.RespawningAnimals;
 import net.fabricmc.api.ModInitializer;
 

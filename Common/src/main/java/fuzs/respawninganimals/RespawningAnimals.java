@@ -1,14 +1,14 @@
 package fuzs.respawninganimals;
 
-import fuzs.puzzleslib.api.core.v1.ModConstructor;
-import fuzs.puzzleslib.api.event.v1.entity.EntityRidingEvents;
-import fuzs.puzzleslib.api.event.v1.entity.EntityTickEvents;
-import fuzs.puzzleslib.api.event.v1.entity.ServerEntityLevelEvents;
-import fuzs.puzzleslib.api.event.v1.entity.living.AnimalTameCallback;
-import fuzs.puzzleslib.api.event.v1.entity.living.CheckMobDespawnCallback;
-import fuzs.puzzleslib.api.event.v1.level.GatherPotentialSpawnsCallback;
-import fuzs.puzzleslib.api.event.v1.server.GameRuleUpdatedCallback;
-import fuzs.puzzleslib.api.event.v1.server.ServerLifecycleEvents;
+import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
+import fuzs.puzzleslib.common.api.event.v1.entity.EntityRidingEvents;
+import fuzs.puzzleslib.common.api.event.v1.entity.EntityTickEvents;
+import fuzs.puzzleslib.common.api.event.v1.entity.ServerEntityLevelEvents;
+import fuzs.puzzleslib.common.api.event.v1.entity.living.AnimalTameCallback;
+import fuzs.puzzleslib.common.api.event.v1.entity.living.CheckMobDespawnCallback;
+import fuzs.puzzleslib.common.api.event.v1.level.GatherPotentialSpawnsCallback;
+import fuzs.puzzleslib.common.api.event.v1.server.GameRuleUpdatedCallback;
+import fuzs.puzzleslib.common.api.event.v1.server.ServerLifecycleEvents;
 import fuzs.respawninganimals.handler.AnimalPersistenceHandler;
 import fuzs.respawninganimals.handler.AnimalSpawningHandler;
 import fuzs.respawninganimals.init.ModRegistry;

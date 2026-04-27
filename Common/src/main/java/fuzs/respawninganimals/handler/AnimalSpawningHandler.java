@@ -1,9 +1,9 @@
 package fuzs.respawninganimals.handler;
 
-import fuzs.puzzleslib.api.core.v1.ModContainer;
-import fuzs.puzzleslib.api.core.v1.ModLoaderEnvironment;
-import fuzs.puzzleslib.api.event.v1.core.EventResult;
-import fuzs.puzzleslib.api.util.v1.EntityHelper;
+import fuzs.puzzleslib.common.api.core.v1.ModContainer;
+import fuzs.puzzleslib.common.api.core.v1.ModLoaderEnvironment;
+import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
+import fuzs.puzzleslib.common.api.util.v1.EntityHelper;
 import fuzs.respawninganimals.RespawningAnimals;
 import fuzs.respawninganimals.init.ModRegistry;
 import net.minecraft.core.BlockPos;
@@ -35,7 +35,7 @@ public class AnimalSpawningHandler {
             EntitySpawnReason.BUCKET);
 
     public static void onServerStarted(MinecraftServer minecraftServer) {
-        onGameRulesUpdated(minecraftServer.getWorldData().getGameRules());
+        onGameRulesUpdated(minecraftServer.getGameRules());
     }
 
     public static void onGameRulesUpdated(GameRules gameRules) {
@@ -100,7 +100,7 @@ public class AnimalSpawningHandler {
     public static boolean isAnimalDespawningAllowed(EntityType<?> entityType, @Nullable GameRules gameRules, MobCategory mobCategory) {
         if (gameRules != null && !gameRules.get(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value())) {
             return false;
-        } else if (entityType.is(ModRegistry.PERSISTENT_ANIMALS_ENTITY_TYPE_TAG)) {
+        } else if (entityType.builtInRegistryHolder().is(ModRegistry.PERSISTENT_ANIMALS_ENTITY_TYPE_TAG)) {
             return false;
         } else {
             return mobCategory == MobCategory.CREATURE;
