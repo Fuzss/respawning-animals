@@ -1,8 +1,8 @@
 package fuzs.respawninganimals.fabric.client;
 
 import fuzs.puzzleslib.common.api.client.core.v1.ClientModConstructor;
-import fuzs.respawninganimals.RespawningAnimals;
-import fuzs.respawninganimals.client.RespawningAnimalsClient;
+import fuzs.respawninganimals.common.RespawningAnimals;
+import fuzs.respawninganimals.common.client.RespawningAnimalsClient;
 import net.fabricmc.api.ClientModInitializer;
 
 public class RespawningAnimalsFabricClient implements ClientModInitializer {

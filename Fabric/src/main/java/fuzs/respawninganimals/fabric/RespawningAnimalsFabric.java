@@ -1,7 +1,7 @@
 package fuzs.respawninganimals.fabric;
 
 import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
-import fuzs.respawninganimals.RespawningAnimals;
+import fuzs.respawninganimals.common.RespawningAnimals;
 import net.fabricmc.api.ModInitializer;
 
 public class RespawningAnimalsFabric implements ModInitializer {

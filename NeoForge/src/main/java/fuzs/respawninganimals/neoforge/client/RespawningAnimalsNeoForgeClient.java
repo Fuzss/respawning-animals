@@ -2,9 +2,9 @@ package fuzs.respawninganimals.neoforge.client;
 
 import fuzs.puzzleslib.common.api.client.core.v1.ClientModConstructor;
 import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;
-import fuzs.respawninganimals.RespawningAnimals;
-import fuzs.respawninganimals.client.RespawningAnimalsClient;
-import fuzs.respawninganimals.data.client.ModLanguageProvider;
+import fuzs.respawninganimals.common.RespawningAnimals;
+import fuzs.respawninganimals.common.client.RespawningAnimalsClient;
+import fuzs.respawninganimals.common.data.client.ModLanguageProvider;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.Mod;
 

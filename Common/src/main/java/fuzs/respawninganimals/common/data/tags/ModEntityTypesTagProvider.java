@@ -1,8 +1,8 @@
-package fuzs.respawninganimals.data.tags;
+package fuzs.respawninganimals.common.data.tags;
 
 import fuzs.puzzleslib.common.api.data.v2.core.DataProviderContext;
 import fuzs.puzzleslib.common.api.data.v2.tags.AbstractTagProvider;
-import fuzs.respawninganimals.init.ModRegistry;
+import fuzs.respawninganimals.common.init.ModRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;

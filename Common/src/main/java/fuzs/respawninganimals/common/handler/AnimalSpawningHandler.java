@@ -1,11 +1,11 @@
-package fuzs.respawninganimals.handler;
+package fuzs.respawninganimals.common.handler;
 
 import fuzs.puzzleslib.common.api.core.v1.ModContainer;
 import fuzs.puzzleslib.common.api.core.v1.ModLoaderEnvironment;
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.common.api.util.v1.EntityHelper;
-import fuzs.respawninganimals.RespawningAnimals;
-import fuzs.respawninganimals.init.ModRegistry;
+import fuzs.respawninganimals.common.RespawningAnimals;
+import fuzs.respawninganimals.common.init.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;

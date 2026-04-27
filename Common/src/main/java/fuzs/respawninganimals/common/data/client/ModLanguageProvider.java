@@ -1,8 +1,8 @@
-package fuzs.respawninganimals.data.client;
+package fuzs.respawninganimals.common.data.client;
 
 import fuzs.puzzleslib.common.api.client.data.v2.AbstractLanguageProvider;
 import fuzs.puzzleslib.common.api.data.v2.core.DataProviderContext;
-import fuzs.respawninganimals.init.ModRegistry;
+import fuzs.respawninganimals.common.init.ModRegistry;
 
 public class ModLanguageProvider extends AbstractLanguageProvider {
 

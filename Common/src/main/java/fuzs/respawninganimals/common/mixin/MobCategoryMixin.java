@@ -1,4 +1,4 @@
-package fuzs.respawninganimals.mixin;
+package fuzs.respawninganimals.common.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.world.entity.MobCategory;

@@ -1,4 +1,4 @@
-package fuzs.respawninganimals;
+package fuzs.respawninganimals.common;
 
 import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.common.api.event.v1.entity.EntityRidingEvents;
@@ -9,9 +9,9 @@ import fuzs.puzzleslib.common.api.event.v1.entity.living.CheckMobDespawnCallback
 import fuzs.puzzleslib.common.api.event.v1.level.GatherPotentialSpawnsCallback;
 import fuzs.puzzleslib.common.api.event.v1.server.GameRuleUpdatedCallback;
 import fuzs.puzzleslib.common.api.event.v1.server.ServerLifecycleEvents;
-import fuzs.respawninganimals.handler.AnimalPersistenceHandler;
-import fuzs.respawninganimals.handler.AnimalSpawningHandler;
-import fuzs.respawninganimals.init.ModRegistry;
+import fuzs.respawninganimals.common.handler.AnimalPersistenceHandler;
+import fuzs.respawninganimals.common.handler.AnimalSpawningHandler;
+import fuzs.respawninganimals.common.init.ModRegistry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.gamerules.GameRule;

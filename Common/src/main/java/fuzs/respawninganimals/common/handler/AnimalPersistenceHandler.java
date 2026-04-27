@@ -1,4 +1,4 @@
-package fuzs.respawninganimals.handler;
+package fuzs.respawninganimals.common.handler;
 
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import net.minecraft.server.level.ServerLevel;
