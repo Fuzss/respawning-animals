@@ -3,9 +3,9 @@ package fuzs.respawninganimals.common.handler;
 import fuzs.puzzleslib.common.api.core.v1.ModContainer;
 import fuzs.puzzleslib.common.api.core.v1.ModLoaderEnvironment;
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
-import fuzs.puzzleslib.common.api.util.v1.EntityHelper;
 import fuzs.respawninganimals.common.RespawningAnimals;
 import fuzs.respawninganimals.common.init.ModRegistry;
+import fuzs.respawninganimals.common.services.CommonAbstractions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -90,8 +90,8 @@ public class AnimalSpawningHandler {
 
     public static boolean isAllowedToDespawn(Mob mob, @Nullable GameRules gameRules) {
         if (isAnimalDespawningAllowed(mob.getType(), gameRules, mob.getType().getCategory())) {
-            EntitySpawnReason entitySpawnReason = EntityHelper.getMobSpawnReason(mob);
-            return entitySpawnReason != null && !PERSISTENT_SPAWN_TYPES.contains(entitySpawnReason);
+            EntitySpawnReason spawnReason = CommonAbstractions.INSTANCE.getEntitySpawnReason(mob);
+            return spawnReason != null && !PERSISTENT_SPAWN_TYPES.contains(spawnReason);
         } else {
             return false;
         }
@@ -107,11 +107,10 @@ public class AnimalSpawningHandler {
         }
     }
 
-    public static EventResult onEntityLoad(Entity entity, ServerLevel serverLevel, boolean isNewlySpawned) {
-        if (isNewlySpawned) {
-            EntitySpawnReason entitySpawnReason = EntityHelper.getMobSpawnReason(entity);
+    public static EventResult onEntityJoin(Entity entity, ServerLevel serverLevel, boolean isLoadedFromDisk, @Nullable EntitySpawnReason spawnReason) {
+        if (!isLoadedFromDisk) {
             // don't spawn mobs during chunk generation which we would remove again anyway since they are certainly too far from the player
-            if (entitySpawnReason == EntitySpawnReason.CHUNK_GENERATION) {
+            if (spawnReason == EntitySpawnReason.CHUNK_GENERATION) {
                 // chunk generation only runs for the creature type, so we can safely fix the type if necessary
                 applyCorrectMobCategory(entity.getType());
                 if (isAnimalDespawningAllowed(entity.getType(), serverLevel.getGameRules(), MobCategory.CREATURE)) {

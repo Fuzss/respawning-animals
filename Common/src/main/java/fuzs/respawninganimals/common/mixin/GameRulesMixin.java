@@ -19,10 +19,10 @@ abstract class GameRulesMixin {
 
     @Inject(method = "<init>(Lnet/minecraft/world/flag/FeatureFlagSet;Lnet/minecraft/world/level/gamerules/GameRuleMap;)V",
             at = @At("TAIL"))
-    public void init(FeatureFlagSet featureFlagSet, GameRuleMap gameRuleMap, CallbackInfo callback) {
+    public void init(FeatureFlagSet enabledFeatures, GameRuleMap map, CallbackInfo callback) {
         // If the game rule is not present (this is a world that has been loaded without the mod before), the value is set
         // to true instead of default false to prevent unwanted behavior such as animals vanishing from farms.
-        if (!gameRuleMap.has(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value())) {
+        if (!map.has(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value())) {
             this.rules.set(ModRegistry.REMOVE_ANIMALS_WHEN_FAR_AWAY_GAME_RULE.value(), Boolean.FALSE);
         }
     }

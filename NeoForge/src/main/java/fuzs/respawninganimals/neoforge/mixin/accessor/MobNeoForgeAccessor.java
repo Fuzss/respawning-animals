@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(Mob.class)
 public interface MobNeoForgeAccessor {
-
     @Accessor(value = "spawnType", remap = false)
     void respawninganimals$setSpawnType(@Nullable EntitySpawnReason spawnType);
 }

@@ -8,7 +8,7 @@ A Minecraft mod. Downloads can be found on [CurseForge](https://www.curseforge.c
 
 Remove Animals is fully controlled through game rules and entity tags. No other configuration options are provided.
 
-All rules are world specific and can be set initially during world creation via the game rules menu, or changed at any time using the `/gamerule` command.
+All rules are world-specific and can be set initially during world creation via the game rules menu, or changed at any time using the `/gamerule` command.
 
 ---
 
@@ -70,4 +70,4 @@ It is possible to exclude specific animal types from being affected by these rul
 
 Any entity type added to this tag will never be removed, regardless of game rule settings.
 
-This allows fine grained control for mods, datapacks, or special animals that should always remain in the world.
+This allows fine-grained control for mods, datapacks, or special animals that should always remain in the world.
