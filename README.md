@@ -6,7 +6,7 @@ A Minecraft mod. Downloads can be found on [CurseForge](https://www.curseforge.c
 
 ## Configuration
 
-Remove Animals is fully controlled through game rules and entity tags. No other configuration options are provided.
+Respawning Animals is fully controlled through game rules and entity tags. No other configuration options are provided.
 
 All rules are world-specific and can be set initially during world creation via the game rules menu, or changed at any time using the `/gamerule` command.
 
