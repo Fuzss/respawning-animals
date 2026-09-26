@@ -12,7 +12,7 @@ import fuzs.puzzleslib.common.api.event.v1.level.GatherPotentialSpawnsCallback;
 import fuzs.puzzleslib.common.api.event.v1.server.GameRuleUpdatedCallback;
 import fuzs.puzzleslib.common.api.event.v1.server.ServerLifecycleEvents;
 import fuzs.puzzleslib.common.api.util.v1.CodecExtras;
-import fuzs.respawninganimals.common.config.ServerConfig;
+import fuzs.respawninganimals.common.config.CommonConfig;
 import fuzs.respawninganimals.common.handler.AnimalPersistenceHandler;
 import fuzs.respawninganimals.common.handler.AnimalSpawningHandler;
 import fuzs.respawninganimals.common.init.ModRegistry;
@@ -28,7 +28,7 @@ public class RespawningAnimals implements ModConstructor {
     public static final String MOD_NAME = "Respawning Animals";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
-    public static final ConfigHolder CONFIG = ConfigHolder.builder(MOD_ID).server(ServerConfig.class);
+    public static final ConfigHolder CONFIG = ConfigHolder.builder(MOD_ID).common(CommonConfig.class);
 
     public static final String SPAWN_REASON_TAG = id("spawn_reason").toString();
     public static final Codec<EntitySpawnReason> SPAWN_REASON_CODEC = CodecExtras.fromEnum(EntitySpawnReason.class);
