@@ -4,7 +4,7 @@ import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;
 import fuzs.respawninganimals.common.RespawningAnimals;
 import fuzs.respawninganimals.common.data.tags.ModEntityTypesTagProvider;
-import fuzs.respawninganimals.common.entity.SpawnReasonMob;
+import fuzs.respawninganimals.common.world.entity.SpawnReasonMob;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;

@@ -4,7 +4,7 @@ import fuzs.puzzleslib.common.api.core.v1.ModContainer;
 import fuzs.puzzleslib.common.api.core.v1.ModLoaderEnvironment;
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import fuzs.respawninganimals.common.RespawningAnimals;
-import fuzs.respawninganimals.common.entity.SpawnReasonMob;
+import fuzs.respawninganimals.common.world.entity.SpawnReasonMob;
 import fuzs.respawninganimals.common.init.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;

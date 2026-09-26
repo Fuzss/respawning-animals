@@ -1,4 +1,4 @@
-package fuzs.respawninganimals.common.entity;
+package fuzs.respawninganimals.common.world.entity;
 
 import net.minecraft.world.entity.EntitySpawnReason;
 import org.jspecify.annotations.Nullable;
