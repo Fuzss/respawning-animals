@@ -1,6 +1,6 @@
 package fuzs.respawninganimals.common.mixin;
 
-import fuzs.respawninganimals.common.entity.SpawnReasonMob;
+import fuzs.respawninganimals.common.world.entity.SpawnReasonMob;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;

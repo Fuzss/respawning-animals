@@ -1,6 +1,6 @@
 package fuzs.respawninganimals.common.mixin;
 
-import fuzs.respawninganimals.common.entity.SpawnReasonMob;
+import fuzs.respawninganimals.common.world.entity.SpawnReasonMob;
 import net.minecraft.world.entity.ConversionParams;
 import net.minecraft.world.entity.ConversionType;
 import net.minecraft.world.entity.EntitySpawnReason;

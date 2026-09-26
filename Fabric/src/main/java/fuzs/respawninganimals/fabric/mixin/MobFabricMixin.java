@@ -1,6 +1,6 @@
 package fuzs.respawninganimals.fabric.mixin;
 
-import fuzs.respawninganimals.common.entity.SpawnReasonSetter;
+import fuzs.respawninganimals.common.world.entity.SpawnReasonSetter;
 import fuzs.respawninganimals.fabric.helper.FabricSpawnReasonHelper;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;

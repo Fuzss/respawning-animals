@@ -1,8 +1,8 @@
 package fuzs.respawninganimals.common.mixin;
 
 import fuzs.respawninganimals.common.RespawningAnimals;
-import fuzs.respawninganimals.common.entity.SpawnReasonMob;
-import fuzs.respawninganimals.common.entity.SpawnReasonSetter;
+import fuzs.respawninganimals.common.world.entity.SpawnReasonMob;
+import fuzs.respawninganimals.common.world.entity.SpawnReasonSetter;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;

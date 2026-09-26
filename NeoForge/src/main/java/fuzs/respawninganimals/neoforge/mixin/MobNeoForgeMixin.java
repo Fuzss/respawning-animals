@@ -1,6 +1,6 @@
 package fuzs.respawninganimals.neoforge.mixin;
 
-import fuzs.respawninganimals.common.entity.SpawnReasonSetter;
+import fuzs.respawninganimals.common.world.entity.SpawnReasonSetter;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
