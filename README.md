@@ -1,25 +1,30 @@
 # Respawning Animals
 
-A Minecraft mod. Downloads can be found on [CurseForge](https://www.curseforge.com/members/fuzs_/projects) and [Modrinth](https://modrinth.com/user/Fuzs).
+A Minecraft mod. Downloads can be found on [CurseForge](https://www.curseforge.com/members/fuzs_/projects)
+and [Modrinth](https://modrinth.com/user/Fuzs).
 
 ![](banner.png)
 
 ## Configuration
 
-Respawning Animals is fully controlled through game rules and entity tags. No other configuration options are provided.
+Respawning Animals is configured through game rules, entity type tags, and a small config file.
 
-All rules are world-specific and can be set initially during world creation via the game rules menu, or changed at any time using the `/gamerule` command.
+All game rules are world-specific and can be set initially during world creation via the game rules menu, or changed at
+any time using the `/gamerule` command.
 
 ---
 
 ### Game rules
 
 #### `respawninganimals:remove_animals_when_far_away`
+
 **Default:** `true` for new worlds, `false` for existing worlds
 
 Controls whether animals are removed when they are far away from players.
 
-When enabled, animals no longer stay in the world forever. Animals that are far away from any player may be removed, similar to monsters and water creatures. Animals become permanent only after player interaction such as feeding, leashing, riding, or naming.
+When enabled, animals no longer stay in the world forever. Animals that are far away from any player may be removed,
+similar to monsters and water creatures. Animals become permanent only after player interaction such as feeding,
+leashing, riding, or naming.
 
 When disabled, animals behave like in vanilla Minecraft and are never removed due to distance.
 
@@ -30,6 +35,7 @@ This rule was known as `persistentAnimals` before Minecraft 1.21.11.
 ---
 
 #### `respawninganimals:min_animals_near_player`
+
 **Default:** `15`
 
 If the number of animals near a player falls below this value, new animals will spawn nearby to reach the minimum.
@@ -43,6 +49,7 @@ This rule was known as `animalMobCap` before Minecraft 1.21.11.
 ---
 
 #### `respawninganimals:remove_animals_distance`
+
 **Default:** `32`
 
 Animals farther than this distance from the nearest player may be removed over time.
@@ -52,6 +59,7 @@ Only applies when `remove_animals_when_far_away` is enabled.
 ---
 
 #### `respawninganimals:remove_animals_instantly_distance`
+
 **Default:** `128`
 
 Animals farther than this distance from the nearest player are removed instantly.
@@ -71,3 +79,21 @@ It is possible to exclude specific animal types from being affected by these rul
 Any entity type added to this tag will never be removed, regardless of game rule settings.
 
 This allows fine-grained control for mods, datapacks, or special animals that should always remain in the world.
+
+---
+
+### Config file
+
+Additional behavior is controlled through a config file with two sections.
+
+The first section concerns despawn reasons, meaning which types of animal spawns are affected by the mod and may
+therefore be removed when they are far away from players. Options are grouped by how the animals were spawned, e.g.
+natural world generation, mob spawners, player actions, breeding, or structures.
+
+The second section concerns persistence actions, which define the player interactions that make an animal permanent,
+e.g. breeding, leading, taming, or riding. By default, only naturally spawned animals are affected, while all other
+animals remain permanent.
+
+A few spawn reasons are always handled in a fixed way and are intentionally not configurable: mobs spawned by game
+events are left completely to vanilla so their own despawning logic keeps working, and jockey mounts are always removed
+when they are far away.
