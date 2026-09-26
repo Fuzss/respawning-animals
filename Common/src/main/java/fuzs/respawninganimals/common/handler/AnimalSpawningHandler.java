@@ -3,8 +3,9 @@ package fuzs.respawninganimals.common.handler;
 import fuzs.puzzleslib.common.api.core.v1.ModContainer;
 import fuzs.puzzleslib.common.api.core.v1.ModLoaderEnvironment;
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
-import fuzs.puzzleslib.common.api.util.v1.EntityHelper;
 import fuzs.respawninganimals.common.RespawningAnimals;
+import fuzs.respawninganimals.common.config.ServerConfig;
+import fuzs.respawninganimals.common.entity.SpawnReasonMob;
 import fuzs.respawninganimals.common.init.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,10 +30,9 @@ public class AnimalSpawningHandler {
     private static final int VANILLA_CREATURE_CATEGORY_MAX_INSTANCES = MobCategory.CREATURE.getMaxInstancesPerChunk();
     private static final int VANILLA_CREATURE_CATEGORY_DESPAWN_DISTANCE = MobCategory.CREATURE.getDespawnDistance();
     private static final int VANILLA_CREATURE_CATEGORY_NO_DESPAWN_DISTANCE = MobCategory.CREATURE.getNoDespawnDistance();
-    private static final Set<EntitySpawnReason> PERSISTENT_SPAWN_TYPES = Set.of(EntitySpawnReason.STRUCTURE,
-            EntitySpawnReason.BREEDING,
-            EntitySpawnReason.TRIGGERED,
-            EntitySpawnReason.BUCKET);
+    // Fallback used when the server config is not yet available.
+    private static final Set<EntitySpawnReason> DEFAULT_VOLATILE_SPAWN_TYPES = Set.of(EntitySpawnReason.NATURAL,
+            EntitySpawnReason.CHUNK_GENERATION);
 
     public static void onServerStarted(MinecraftServer minecraftServer) {
         onGameRulesUpdated(minecraftServer.getGameRules());
@@ -54,7 +54,7 @@ public class AnimalSpawningHandler {
 
     public static EventResult onCheckMobDespawn(Mob mob, ServerLevel serverLevel) {
         if (isAllowedToDespawn(mob, serverLevel.getGameRules())) {
-            // copied from Mob::checkDespawn, so we can run it manually for the creature mob category
+            // Copied from Mob::checkDespawn, so may can run it manually for the creature mob category.
             if (!mob.isPersistenceRequired() && !mob.requiresCustomPersistence()) {
                 Player player = serverLevel.getNearestPlayer(mob, -1.0);
                 if (player != null) {
@@ -90,10 +90,27 @@ public class AnimalSpawningHandler {
 
     public static boolean isAllowedToDespawn(Mob mob, @Nullable GameRules gameRules) {
         if (isAnimalDespawningAllowed(mob.getType(), gameRules, mob.getType().getCategory())) {
-            EntitySpawnReason entitySpawnReason = EntityHelper.getMobSpawnReason(mob);
-            return entitySpawnReason != null && !PERSISTENT_SPAWN_TYPES.contains(entitySpawnReason);
+            EntitySpawnReason spawnReason = getEntitySpawnReason(mob);
+            return spawnReason != null && isVolatileSpawnReason(spawnReason);
         } else {
             return false;
+        }
+    }
+
+    @Nullable
+    public static EntitySpawnReason getEntitySpawnReason(Mob mob) {
+        return ((SpawnReasonMob) mob).respawninganimals$getSpawnReason();
+    }
+
+    /**
+     * Only a small allowlist of spawn reasons is affected by the respawning mechanics, everything else - including
+     * unknown reasons and mobs that never had a reason set - is treated as persistent.
+     */
+    public static boolean isVolatileSpawnReason(EntitySpawnReason spawnReason) {
+        if (RespawningAnimals.CONFIG.getHolder(ServerConfig.class).isAvailable()) {
+            return RespawningAnimals.CONFIG.get(ServerConfig.class).volatileDespawnReasons.contains(spawnReason);
+        } else {
+            return DEFAULT_VOLATILE_SPAWN_TYPES.contains(spawnReason);
         }
     }
 
@@ -107,28 +124,32 @@ public class AnimalSpawningHandler {
         }
     }
 
-    public static EventResult onEntityLoad(Entity entity, ServerLevel serverLevel, boolean isNewlySpawned) {
-        if (isNewlySpawned) {
-            EntitySpawnReason entitySpawnReason = EntityHelper.getMobSpawnReason(entity);
-            // don't spawn mobs during chunk generation which we would remove again anyway since they are certainly too far from the player
+    public static EventResult onEntityJoin(Entity entity, ServerLevel serverLevel, boolean isLoadedFromDisk, @Nullable EntitySpawnReason spawnReason) {
+        if (!isLoadedFromDisk) {
+            // Read the reason from the mob itself instead of the platform-provided value.
+            // Only our own value contains the refined reason from Mob::finalizeSpawn (the platform value is set when the entity is created).
+            EntitySpawnReason entitySpawnReason = entity instanceof Mob mob ? getEntitySpawnReason(mob) : spawnReason;
+            // Don't spawn mobs during chunk generation which we would remove again anyway since they are most certainly too far from the player.
             if (entitySpawnReason == EntitySpawnReason.CHUNK_GENERATION) {
-                // chunk generation only runs for the creature type, so we can safely fix the type if necessary
+                // Chunk generation only runs for the creature type, so we can safely adjust the type if necessary.
                 applyCorrectMobCategory(entity.getType());
-                if (isAnimalDespawningAllowed(entity.getType(), serverLevel.getGameRules(), MobCategory.CREATURE)) {
+                if (isVolatileSpawnReason(entitySpawnReason) && isAnimalDespawningAllowed(entity.getType(),
+                        serverLevel.getGameRules(),
+                        MobCategory.CREATURE)) {
                     return EventResult.INTERRUPT;
                 }
             }
         }
 
-        // make existing mobs in the world persistent to help with compat for worlds that have been used without the mod before
+        // Make existing mobs in the world persistent to help with compat for worlds that have been used without the mod before.
         setPersistenceForPersistentAnimal(entity);
         return EventResult.PASS;
     }
 
     private static void setPersistenceForPersistentAnimal(Entity entity) {
-        // find all mobs that would count towards the creature mob cap and therefore would hinder the spawn cycle from spawning new animals
-        // making them persistent prevents counting towards the mob cap, otherwise this doesn't really have any implications for us since we ignore those spawn types anyway
-        // in vanilla if the mod were to be removed, this also has no consequences
+        // Find all mobs that would count towards the creature mob cap and therefore would hinder the spawn cycle from spawning new animals.
+        // Making them persistent prevents counting towards the mob cap; otherwise this doesn't really have any implications for us since we ignore those spawn types anyway.
+        // Switching back to vanilla (if the mod were to be removed) this also has no consequences.
         if (entity instanceof Mob mob && mob.getType().getCategory() == MobCategory.CREATURE) {
             // do not check the game rule, in case it is toggled during gameplay
             if (!mob.isPersistenceRequired() && !isAllowedToDespawn(mob, null)) {
@@ -138,9 +159,9 @@ public class AnimalSpawningHandler {
     }
 
     private static void applyCorrectMobCategory(EntityType<?> entityType) {
-        // an entity type must have the same mob category set that is used for spawning the entity naturally (via mob spawn type natural or chunk generation)
-        // otherwise the entity does not count towards its own spawn cap, which can lead to infinite spawns
-        // for creatures this unfortunately usually goes unnoticed since the spawning cycle never runs as there are usually enough vanilla animals in the world to fill up the cap
+        // An entity type must carry the same mob category used for spawning the entity naturally (via mob spawn type natural or chunk generation).
+        // Otherwise, the entity does not count towards its own spawn cap, which can lead to infinite spawns.
+        // For creatures this unfortunately usually goes unnoticed since the spawning cycle never runs as there are usually enough vanilla animals in the world to fill up the cap.
         if (entityType.getCategory() != MobCategory.CREATURE) {
             Identifier identifier = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
             Optional<String> issues = ModLoaderEnvironment.INSTANCE.getModContainer(identifier.getNamespace())
@@ -149,12 +170,12 @@ public class AnimalSpawningHandler {
                     .map(ModContainer::getDisplayName)
                     .orElse(identifier.getNamespace());
             RespawningAnimals.LOGGER.warn(
-                    "Mismatched spawn type for {}! Mob is registered as {}, but spawning as {}. Report this to the author of {}"
-                            + (issues.map((String s) -> " at " + s).orElse("")) + ".",
+                    "Mismatched spawn type for {}! Mob is registered as {}, but spawning as {}. Report this to the author of {}{}.",
                     identifier,
                     entityType.getCategory(),
                     MobCategory.CREATURE,
-                    modName);
+                    modName,
+                    issues.map((String s) -> " at " + s).orElse(""));
             entityType.category = MobCategory.CREATURE;
         }
     }
@@ -165,7 +186,7 @@ public class AnimalSpawningHandler {
             while (iterator.hasNext()) {
                 Weighted<MobSpawnSettings.SpawnerData> spawnerData = iterator.next();
                 applyCorrectMobCategory(spawnerData.value().type());
-                // prevent blacklisted animals from being respawned to prevent them from spawning endlessly since they also do not count towards the mob cap
+                // Prevent blacklisted animals from being respawned to prevent them from spawning endlessly since they also do not count towards the mob cap.
                 if (!isAnimalDespawningAllowed(spawnerData.value().type(),
                         level.getGameRules(),
                         MobCategory.CREATURE)) {

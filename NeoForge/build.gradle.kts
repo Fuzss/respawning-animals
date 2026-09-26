@@ -8,6 +8,6 @@ dependencies {
 
 multiloader {
     mixins {
-        accessor("MobNeoForgeAccessor")
+        mixin("MobNeoForgeMixin")
     }
 }

@@ -8,6 +8,6 @@ dependencies {
 
 multiloader {
     mixins {
-        mixin("GameRulesMixin", "MobCategoryMixin")
+        mixin("ConversionTypeMixin", "EntityTypeMixin", "GameRulesMixin", "MobCategoryMixin", "MobMixin")
     }
 }
