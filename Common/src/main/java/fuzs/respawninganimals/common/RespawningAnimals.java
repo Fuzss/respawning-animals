@@ -5,7 +5,7 @@ import fuzs.puzzleslib.common.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.common.api.event.v1.entity.EntityRidingEvents;
 import fuzs.puzzleslib.common.api.event.v1.entity.EntityTickEvents;
-import fuzs.puzzleslib.common.api.event.v1.entity.ServerEntityLevelEvents;
+import fuzs.puzzleslib.common.api.event.v1.entity.ServerEntityEvents;
 import fuzs.puzzleslib.common.api.event.v1.entity.living.AnimalTameCallback;
 import fuzs.puzzleslib.common.api.event.v1.entity.living.CheckMobDespawnCallback;
 import fuzs.puzzleslib.common.api.event.v1.level.GatherPotentialSpawnsCallback;
@@ -48,7 +48,7 @@ public class RespawningAnimals implements ModConstructor {
         AnimalTameCallback.EVENT.register(AnimalPersistenceHandler::onAnimalTame);
         EntityRidingEvents.START.register(AnimalPersistenceHandler::onStartRiding);
         CheckMobDespawnCallback.EVENT.register(AnimalSpawningHandler::onCheckMobDespawn);
-        ServerEntityLevelEvents.LOAD.register(AnimalSpawningHandler::onEntityLoad);
+        ServerEntityEvents.JOIN.register(AnimalSpawningHandler::onEntityJoin);
         ServerLifecycleEvents.STARTED.register(AnimalSpawningHandler::onServerStarted);
         GatherPotentialSpawnsCallback.EVENT.register(AnimalSpawningHandler::onGatherPotentialSpawns);
     }

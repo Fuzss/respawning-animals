@@ -1,7 +1,10 @@
 package fuzs.respawninganimals.common.mixin;
 
 import fuzs.respawninganimals.common.entity.SpawnReasonMob;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,11 +20,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(EntityType.class)
 abstract class EntityTypeMixin {
-    @Inject(method = "create(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/EntitySpawnRequest;)Lnet/minecraft/world/entity/Entity;",
+    @Inject(method = "create(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/EntitySpawnReason;)Lnet/minecraft/world/entity/Entity;",
             at = @At("RETURN"))
-    public void create(Level level, EntitySpawnRequest request, CallbackInfoReturnable<Entity> callback) {
+    public void create(Level level, EntitySpawnReason spawnReason, CallbackInfoReturnable<Entity> callback) {
         if (callback.getReturnValue() instanceof Mob mob) {
-            ((SpawnReasonMob) mob).respawninganimals$setSpawnReason(request.reason());
+            ((SpawnReasonMob) mob).respawninganimals$setSpawnReason(spawnReason);
         }
     }
 }
