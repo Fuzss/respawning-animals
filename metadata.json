@@ -52,7 +52,7 @@
         }
     ],
     "environments": {
-        "client": "optional",
+        "client": "unsupported",
         "server": "required"
     },
     "platforms": [
