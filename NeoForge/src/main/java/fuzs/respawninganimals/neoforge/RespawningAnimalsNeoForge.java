@@ -1,7 +1,7 @@
 package fuzs.respawninganimals.neoforge;
 
 import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
-import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;
+import fuzs.puzzleslib.neoforge.api.data.v3.core.DataProviderBuilder;
 import fuzs.respawninganimals.common.RespawningAnimals;
 import fuzs.respawninganimals.common.data.tags.ModEntityTypesTagProvider;
 import fuzs.respawninganimals.neoforge.mixin.accessor.MobNeoForgeAccessor;
@@ -16,7 +16,7 @@ public class RespawningAnimalsNeoForge {
     public RespawningAnimalsNeoForge() {
         ModConstructor.construct(RespawningAnimals.MOD_ID, RespawningAnimals::new);
         registerEventHandlers(NeoForge.EVENT_BUS);
-        DataProviderHelper.registerDataProviders(RespawningAnimals.MOD_ID, ModEntityTypesTagProvider::new);
+        DataProviderBuilder.of(RespawningAnimals.MOD_ID).addProvider(ModEntityTypesTagProvider::new);
     }
 
     private static void registerEventHandlers(IEventBus eventBus) {
