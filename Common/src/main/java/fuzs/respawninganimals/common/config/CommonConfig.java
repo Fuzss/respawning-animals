@@ -7,7 +7,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 
 import java.util.Set;
 
-public class ServerConfig implements ConfigCore {
+public class CommonConfig implements ConfigCore {
     @Config(description = {
             "Types of animal spawns that are affected by the respawning mechanics, meaning their animals may be removed when they are far away from players.",
             "Animals not covered by any enabled option are never removed on their own, but can still be made persistent through player interaction like breeding, leading or naming.",

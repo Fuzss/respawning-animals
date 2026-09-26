@@ -4,7 +4,7 @@ import fuzs.puzzleslib.common.api.core.v1.ModContainer;
 import fuzs.puzzleslib.common.api.core.v1.ModLoaderEnvironment;
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import fuzs.respawninganimals.common.RespawningAnimals;
-import fuzs.respawninganimals.common.config.ServerConfig;
+import fuzs.respawninganimals.common.config.CommonConfig;
 import fuzs.respawninganimals.common.entity.SpawnReasonMob;
 import fuzs.respawninganimals.common.init.ModRegistry;
 import net.minecraft.core.BlockPos;
@@ -24,15 +24,11 @@ import org.jspecify.annotations.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public class AnimalSpawningHandler {
     private static final int VANILLA_CREATURE_CATEGORY_MAX_INSTANCES = MobCategory.CREATURE.getMaxInstancesPerChunk();
     private static final int VANILLA_CREATURE_CATEGORY_DESPAWN_DISTANCE = MobCategory.CREATURE.getDespawnDistance();
     private static final int VANILLA_CREATURE_CATEGORY_NO_DESPAWN_DISTANCE = MobCategory.CREATURE.getNoDespawnDistance();
-    // Fallback used when the server config is not yet available.
-    private static final Set<EntitySpawnReason> DEFAULT_VOLATILE_SPAWN_TYPES = Set.of(EntitySpawnReason.NATURAL,
-            EntitySpawnReason.CHUNK_GENERATION);
 
     public static void onServerStarted(MinecraftServer minecraftServer) {
         onGameRulesUpdated(minecraftServer.getGameRules());
@@ -107,11 +103,7 @@ public class AnimalSpawningHandler {
      * unknown reasons and mobs that never had a reason set - is treated as persistent.
      */
     public static boolean isVolatileSpawnReason(EntitySpawnReason spawnReason) {
-        if (RespawningAnimals.CONFIG.getHolder(ServerConfig.class).isAvailable()) {
-            return RespawningAnimals.CONFIG.get(ServerConfig.class).volatileDespawnReasons.contains(spawnReason);
-        } else {
-            return DEFAULT_VOLATILE_SPAWN_TYPES.contains(spawnReason);
-        }
+        return RespawningAnimals.CONFIG.get(CommonConfig.class).volatileDespawnReasons.contains(spawnReason);
     }
 
     public static boolean isAnimalDespawningAllowed(EntityType<?> entityType, @Nullable GameRules gameRules, MobCategory mobCategory) {
