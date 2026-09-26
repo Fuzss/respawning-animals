@@ -14,6 +14,11 @@ public class CommonConfig implements ConfigCore {
             "Only applies when the \"remove_animals_when_far_away\" game rule is enabled."
     })
     final SpawnReasonsConfig despawnReasons = new SpawnReasonsConfig();
+    @Config(description = {
+            "Player interactions that make an animal persistent so it is never removed by the respawning mechanics.",
+            "Unlike the spawn reason options disabling these can never lead to animals piling up, as they only ever mark a single animal as persistent."
+    })
+    public final PersistenceActionsConfig persistenceActions = new PersistenceActionsConfig();
 
     public Set<EntitySpawnReason> volatileDespawnReasons = Set.of();
 
@@ -31,7 +36,7 @@ public class CommonConfig implements ConfigCore {
         public boolean playerSpawn = false;
         @Config(description = "Animals created through breeding, hatched from eggs or released by a bucket.")
         public boolean husbandry = false;
-        @Config(description = "Animals spawned by structures and scripted game events, e.g. cats in witch huts or llamas spawned by a wandering trader.")
+        @Config(description = "Animals spawned by structures, e.g. cats in witch huts or allays in woodland mansions.")
         public boolean scripted = false;
 
         public Set<EntitySpawnReason> toSet() {
@@ -60,15 +65,28 @@ public class CommonConfig implements ConfigCore {
 
             if (this.scripted) {
                 builder.add(EntitySpawnReason.STRUCTURE);
-                builder.add(EntitySpawnReason.EVENT);
                 builder.add(EntitySpawnReason.PATROL);
                 builder.add(EntitySpawnReason.MOB_SUMMONED);
-                builder.add(EntitySpawnReason.JOCKEY);
                 builder.add(EntitySpawnReason.REINFORCEMENT);
                 builder.add(EntitySpawnReason.TRIGGERED);
             }
 
             return builder.build();
         }
+    }
+
+    public static class PersistenceActionsConfig implements ConfigCore {
+        @Config(description = "Animals that are in love after having been fed their breeding item.")
+        public boolean breeding = true;
+        @Config(description = "Animals attached to a lead by a player or a fence knot.")
+        public boolean leashed = true;
+        @Config(description = "Animals with an owner, like tamed wolves, cats or horses.")
+        public boolean owned = true;
+        @Config(description = "Animals directly after having been tamed.")
+        public boolean tamed = true;
+        @Config(description = "Animals a player has ridden.")
+        public boolean ridden = true;
+        @Config(description = "Animals that have entered a vehicle like a boat or minecart.")
+        public boolean vehicles = true;
     }
 }

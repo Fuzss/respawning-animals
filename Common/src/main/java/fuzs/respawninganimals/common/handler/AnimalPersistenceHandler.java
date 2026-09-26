@@ -1,12 +1,16 @@
 package fuzs.respawninganimals.common.handler;
 
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
+import fuzs.respawninganimals.common.RespawningAnimals;
+import fuzs.respawninganimals.common.config.CommonConfig;
+import fuzs.respawninganimals.common.config.CommonConfig.PersistenceActionsConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.VehicleEntity;
 import net.minecraft.world.level.Level;
@@ -16,52 +20,67 @@ public class AnimalPersistenceHandler {
     public static void onEndEntityTick(Entity entity) {
         if (entity.level() instanceof ServerLevel serverLevel && entity.tickCount % 20 == 0 && entity instanceof Mob mob
                 && !mob.isPersistenceRequired()) {
-            if (AnimalSpawningHandler.isAllowedToDespawn(mob, serverLevel.getGameRules()) && requiresCustomPersistence(
-                    mob)) {
+            // Only volatile animals are marked persistent here, ignored mobs like trader llamas must not be
+            // touched as this would break their own despawning logic.
+            if (AnimalSpawningHandler.isAllowedToDespawn(mob, serverLevel.getGameRules())
+                    && hasPersistenceAction(mob)) {
                 mob.setPersistenceRequired();
             }
         }
     }
 
-    private static boolean requiresCustomPersistence(Mob mob) {
-        // do not include saddled mobs, e.g. striders can spawn with saddles when ridden by zombified piglin
-        if (mob instanceof Animal animal && animal.isInLove()) {
-            // animals that are in love from using their breeding item on them
+    private static boolean hasPersistenceAction(Mob mob) {
+        PersistenceActionsConfig config = RespawningAnimals.CONFIG.get(CommonConfig.class).persistenceActions;
+        if (config.breeding && mob instanceof Animal animal && animal.isInLove()) {
+            // Animals that are in love from having their breeding item used on them.
             return true;
-        } else if (mob.isLeashed()) {
-            // mobs with a lead attached to them
+        } else if (config.leashed && isPlayerLeashed(mob)) {
+            // Mobs with a lead attached to them by a player or a fence knot, trader llamas leashed to
+            // a wandering trader are ignored.
             return true;
-        } else if (mob instanceof OwnableEntity ownable && ownable.getOwnerReference() != null) {
-            // mobs that have an owner like horses or wolves
+        } else if (config.owned && mob instanceof OwnableEntity ownable && ownable.getOwnerReference() != null) {
+            // Mobs that have an owner like horses or wolves.
             return true;
         } else {
             return false;
         }
     }
 
-    public static EventResult onAnimalTame(Animal animal, Player player) {
-        // enable persistence for animals that have been tamed (cats, ocelots, wolves, and all horse types including llamas)
-        setPersistenceForVolatileAnimal(animal);
-        return EventResult.PASS;
+    private static boolean isPlayerLeashed(Mob mob) {
+        if (!mob.isLeashed()) {
+            return false;
+        } else {
+            Entity leashHolder = mob.getLeashHolder();
+            return leashHolder instanceof Player || leashHolder instanceof LeashFenceKnotEntity;
+        }
     }
 
-    public static EventResult onStartRiding(Level level, Entity rider, Entity vehicle) {
-        if (rider instanceof Player) {
-            // make mobs the player has ridden persistent
-            setPersistenceForVolatileAnimal(vehicle);
-        } else if (vehicle instanceof VehicleEntity) {
-            // make mobs entering a vehicle like a boat or minecart persistent
-            setPersistenceForVolatileAnimal(rider);
+    public static EventResult onAnimalTame(Animal animal, Player player) {
+        // Enable persistence for animals that have been tamed (cats, ocelots, wolves, and all horse types including llamas).
+        if (RespawningAnimals.CONFIG.get(CommonConfig.class).persistenceActions.tamed) {
+            setPersistenceForAnimal(animal);
         }
 
         return EventResult.PASS;
     }
 
-    private static void setPersistenceForVolatileAnimal(Entity entity) {
-        if (entity.level() instanceof ServerLevel serverLevel) {
+    public static EventResult onStartRiding(Level level, Entity rider, Entity vehicle) {
+        PersistenceActionsConfig config = RespawningAnimals.CONFIG.get(CommonConfig.class).persistenceActions;
+        if (config.ridden && rider instanceof Player) {
+            // Make mobs the player has ridden persistent.
+            setPersistenceForAnimal(vehicle);
+        } else if (config.vehicles && vehicle instanceof VehicleEntity) {
+            // Make mobs entering a vehicle like a boat or minecart persistent.
+            setPersistenceForAnimal(rider);
+        }
+
+        return EventResult.PASS;
+    }
+
+    private static void setPersistenceForAnimal(Entity entity) {
+        if (!entity.level().isClientSide()) {
             if (entity instanceof Mob mob && mob.getType().getCategory() == MobCategory.CREATURE) {
-                if (!mob.isPersistenceRequired() && AnimalSpawningHandler.isAllowedToDespawn(mob,
-                        serverLevel.getGameRules())) {
+                if (!mob.isPersistenceRequired()) {
                     mob.setPersistenceRequired();
                 }
             }

@@ -4,7 +4,6 @@ import fuzs.puzzleslib.common.api.core.v1.ModContainer;
 import fuzs.puzzleslib.common.api.core.v1.ModLoaderEnvironment;
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import fuzs.respawninganimals.common.RespawningAnimals;
-import fuzs.respawninganimals.common.config.CommonConfig;
 import fuzs.respawninganimals.common.entity.SpawnReasonMob;
 import fuzs.respawninganimals.common.init.ModRegistry;
 import net.minecraft.core.BlockPos;
@@ -86,8 +85,7 @@ public class AnimalSpawningHandler {
 
     public static boolean isAllowedToDespawn(Mob mob, @Nullable GameRules gameRules) {
         if (isAnimalDespawningAllowed(mob.getType(), gameRules, mob.getType().getCategory())) {
-            EntitySpawnReason spawnReason = getEntitySpawnReason(mob);
-            return spawnReason != null && isVolatileSpawnReason(spawnReason);
+            return SpawnReasonPolicy.fromSpawnReason(getEntitySpawnReason(mob)) == SpawnReasonPolicy.DESPAWN;
         } else {
             return false;
         }
@@ -96,14 +94,6 @@ public class AnimalSpawningHandler {
     @Nullable
     public static EntitySpawnReason getEntitySpawnReason(Mob mob) {
         return ((SpawnReasonMob) mob).respawninganimals$getSpawnReason();
-    }
-
-    /**
-     * Only a small allowlist of spawn reasons is affected by the respawning mechanics, everything else - including
-     * unknown reasons and mobs that never had a reason set - is treated as persistent.
-     */
-    public static boolean isVolatileSpawnReason(EntitySpawnReason spawnReason) {
-        return RespawningAnimals.CONFIG.get(CommonConfig.class).volatileDespawnReasons.contains(spawnReason);
     }
 
     public static boolean isAnimalDespawningAllowed(EntityType<?> entityType, @Nullable GameRules gameRules, MobCategory mobCategory) {
@@ -125,7 +115,8 @@ public class AnimalSpawningHandler {
             if (entitySpawnReason == EntitySpawnReason.CHUNK_GENERATION) {
                 // Chunk generation only runs for the creature type, so we can safely adjust the type if necessary.
                 applyCorrectMobCategory(entity.getType());
-                if (isVolatileSpawnReason(entitySpawnReason) && isAnimalDespawningAllowed(entity.getType(),
+                if (SpawnReasonPolicy.fromSpawnReason(entitySpawnReason) == SpawnReasonPolicy.DESPAWN
+                        && isAnimalDespawningAllowed(entity.getType(),
                         serverLevel.getGameRules(),
                         MobCategory.CREATURE)) {
                     return EventResult.INTERRUPT;
@@ -144,8 +135,15 @@ public class AnimalSpawningHandler {
         // Switching back to vanilla (if the mod were to be removed) this also has no consequences.
         if (entity instanceof Mob mob && mob.getType().getCategory() == MobCategory.CREATURE) {
             // do not check the game rule, in case it is toggled during gameplay
-            if (!mob.isPersistenceRequired() && !isAllowedToDespawn(mob, null)) {
-                mob.setPersistenceRequired();
+            if (!mob.isPersistenceRequired()) {
+                SpawnReasonPolicy spawnReasonPolicy = SpawnReasonPolicy.fromSpawnReason(getEntitySpawnReason(mob));
+                // ignored mobs are left completely alone, while blacklisted mobs (which can never be removed) are
+                // kept out of the mob cap even if their spawn reason would normally make them despawn
+                boolean despawnEligible = spawnReasonPolicy == SpawnReasonPolicy.DESPAWN
+                        && isAnimalDespawningAllowed(mob.getType(), null, mob.getType().getCategory());
+                if (spawnReasonPolicy != SpawnReasonPolicy.IGNORE && !despawnEligible) {
+                    mob.setPersistenceRequired();
+                }
             }
         }
     }
