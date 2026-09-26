@@ -33,8 +33,8 @@ abstract class MobMixin implements SpawnReasonMob {
     @Override
     public void respawninganimals$setSpawnReason(@Nullable EntitySpawnReason spawnReason) {
         this.respawninganimals$spawnReason = spawnReason;
-        if (this instanceof SpawnReasonSetter mirror) {
-            mirror.respawninganimals$copySpawnReason(spawnReason);
+        if (this instanceof SpawnReasonSetter setter) {
+            setter.respawninganimals$copySpawnReason(spawnReason);
         }
     }
 
